@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Product } from '@/store/products';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { CARD_WIDTH } from '../contants';
@@ -8,6 +8,7 @@ import Button from '@/components/Button/Button';
 import { Colors } from '@/theme/Variables';
 import { useCart } from '@/hooks/useCart';
 import Icon from 'react-native-vector-icons/AntDesign';
+import { ensureHttpsForImageUri } from '../helper';
 
 type Props = {
   product: Product;
@@ -25,6 +26,9 @@ const ProductCard = ({
 }: Props) => {
   const { Fonts } = useTheme();
   const { cartData } = useCart();
+  const imageUrl = useMemo(() => {
+    return ensureHttpsForImageUri(product?.img);
+  }, [product?.img]);
   const _onAddToCart = useCallback(() => {
     onAddToCart?.({ item: product });
   }, [onAddToCart]);
@@ -44,7 +48,7 @@ const ProductCard = ({
   return (
     <View style={styles.container} testID={testID}>
       <Image
-        source={{ uri: product.img }}
+        source={{ uri: imageUrl }}
         style={styles.image}
         resizeMode="contain"
       />
